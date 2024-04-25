@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WineCellar - Cellars</title>
+    <link rel="stylesheet" href="/styles.css">
+    <script src="/jquery-3.7.1.min.js"></script>
+    <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>-->
+</head>
+
+<body>
+    <nav class="navbar">
+        <ul class="nav-list">
+            <li><a href="/">Home</a></li>
+            <li><a href="/">Cellars</a></li>
+            <li><a href="/wines/listAll">View Your Wines</a>
+            <!-- only display if group is correct -->
+            <% if (user && user.role === 'admin') { %>
+                <li><a href="/admin/">Admin</a>
+            <% } %>
+            <li><a href="/auth/logout">Logout</a>
+        </ul>
+    </nav>
+
+    <main>
+    <section>
+        <aside>
+        <div class="dialog" id="wines">
+       
+        <% if (typeof message !== 'undefined') { %>
+            <p class="message" id="message"><%= message %></p>
+        <% } %>
+        <h2>Cellar <%= cellarData.cellarName %></h2>
+        <% if (wineResults.length > 0) { %>
+            <h4><%= wineResults[0].cellarDesc %></h4>
+        <% } %>
+        <ul>
+            <% wineResults.forEach(item => { %>
+            <div class="winelist" id="wine_<%= item.wine_id %>">
+                <li><a href="/wines/<%= item.wine_id %>"><%= item.wineName %></a> <%= item.year %> -  <%= item.wineryName %>, <%= item.region %>, <%= item.country %>
+                    <div onclick="deleteWine('<%= item.wine_id %>','<%= item.cellarId %>')" class="close-icon"></div>
+                </li>
+            </div>
+            <% }); %>
+        </ul>
+        <button onclick="openAddWinePopup()">Add Wine</button> </h2><a href="/"> Back to cellars</a>
+    </div>
+
+    <div class="dialog">
+        <div id="addWinePopup" class="popup">
+        
+        <div class="popup-content">
+            <h2>Add a bottle</h2>
+            <a href="#" onclick="closeAddWinePopup()" class="close-icon"></a>
+            <form action="/cellar/addWine/" method="post">
+
+            <!-- the wineries can be loaded by admin -->
+            <!-- maybe clodagh just insert them for now and do the admin pages later-->
+            <!-- perhaps the other admin function would be to view all users or something and delete users-->
+
+            <!-- we need to pick the winery from drop downs here
+            -->
+                <select name="country" id="country">
+                    <option value="">Select Country</option>
+                    <% for(var count = 0; count < country_data.length; count++) { %>
+                    <option value="<%= country_data[count].country %>"><%= country_data[count].country %></option>
+                    <% } %>
+                </select>
+
+                <select name="region" id="region" class="form-control">
+                    <option value="">Select Region</option>
+                </select>
+
+                <select name="winery" id="winery" class="form-control">
+                    <option value="">Select Winery</option>
+                </select>
+
+                <div class="form-input-field">
+                    <label for="newWineName">Name/Grape</label> <input type="text" id="newWineName" name="newWineName" required>
+                </div>
+
+                <div class="form-input-field">
+                    <label for="newWineYear">Vintage </label>
+                    <input type="text" id="newWineYear" name="newWineYear" required>
+                 </div>
+
+                <div class="form-input-field">
+                    <label for="newWineColour">Colour</label><input type="text" id="newWineColour" name="newWineColour" required>
+                </div>
+
+                <input type="hidden" value="Add">
+                <input type="hidden" id="<%= cellarData.cellarId %>" name="cellarId" value="<%= cellarData.cellarId %>">
+                <input id="submit" type="submit" value="Add">
+                <!--<input type="hidden" name="_csrf" value="${res.locals.csrfToken}">-->
+
+        </form>
+   
+        </div>
+    </div>
+</main>
+
+<script>
+
+document.getElementById('submit').addEventListener('click', function() {
+    var selectBoxCountry = document.getElementById('country');
+    var selectedCountry = selectBoxCountry.options[selectBoxCountry.selectedIndex].value;
+
+    var selectBoxRegion = document.getElementById('region');
+    var selectedRegion = selectBoxRegion.options[selectBoxRegion.selectedIndex].value;
+
+    var selectBoxWinery = document.getElementById('winery');
+    var selectedWinery = selectBoxWinery.options[selectBoxWinery.selectedIndex].value;
+
+    if (selectedCountry === '') {
+        selectBoxCountry.classList.add("invalid-select");
+    }
+
+    if (selectedRegion === '') {
+        selectBoxRegion.classList.add("invalid-select");
+    }
+
+    if (selectedWinery === '') {
+        selectBoxWinery.classList.add("invalid-select");
+    }
+});
+
+function openAddWinePopup() {
+    document.getElementById("addWinePopup").style.display = "block";
+}
+
+
+function closeAddWinePopup() {
+    document.getElementById("addWinePopup").style.display = "none";
+}
+
+
+function _(element)
+{
+    return document.getElementById(element);
+}
+
+function fetch_data(parent_element, child_element, type)
+{
+    fetch('/cellar/get_data?type='+type+'&parent_value='+parent_element.value+'&parent_id='+parent_element.id+'').then(function(response){
+        return response.json();
+    }).then(function(responseData){
+
+        var html = '';
+
+        if(type == 'load_region')
+        {
+            html = '<option value="">Select Region</option>';
+            responseData.forEach(function(item) {
+                html += '<option value="'+item.data+'" id="'+item.id+'">'+item.data+'</option>';
+            })
+        }
+
+        if(type == 'load_winery')
+        {
+            html = '<option value="">Select Winery</option>';
+            responseData.forEach(function(item) {
+                html += '<option value="'+item.id+'" id="'+item.value+'">'+item.data+'</option>';
+            })
+        }
+    
+        child_element.innerHTML = html;
+    });
+}
+
+_('country').onchange = function(){
+
+    fetch_data(_('country'), _('region'), 'load_region');
+
+};
+
+_('region').onchange = function(){
+
+    fetch_data(_('region'), _('winery'), 'load_winery');
+
+};
+
+function deleteWine(wineId, cellarId) {
+        fetch('/wines/delete/' + cellarId+'/'+wineId, {
+                method: 'DELETE',
+        })
+        .then(response => {
+            if (response.ok) {
+                // Handle success
+                console.log('wine deleted successfully');
+                // Optionally, update the UI or perform any other actions
+                document.getElementById('wine_' + wineId).remove(); // Remove the comment from the DOM
+            } else {
+                // Handle error
+                console.error('Failed to delete wine');
+            }
+        })
+        .catch(error => {
+            // Handle network error
+            console.error('Network error:', error);
+        });
+}
+</script>
+
+</body>
+</html>

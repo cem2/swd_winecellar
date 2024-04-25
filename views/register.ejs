@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/styles.css">
+    <script src="/jquery-3.7.1.min.js"></script>
+    <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>-->
+    <title>WineCellar - Register</title>
+    <style>
+        body {
+            background-color: #f0f0f0; /* light grey */
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 20px;
+        }
+
+        .form-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        /* Style the login box */
+        .register-box {
+            background-color: #f0f0f0;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        form {
+            max-width: 300px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #ffffff; /* white */
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        label {
+            display: inline-block;
+            text-align: right;
+            margin-bottom: 8px;
+            color: #555; /* dark grey */
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            box-sizing: border-box;
+            border: 1px solid #ccc; /* light grey */
+            border-radius: 4px;
+            font-size: 16px;
+        } 
+
+        input[type="submit"] {
+          /*  background-color: #34dba9; /* light green */
+            color: #fff; /* white */
+            cursor: pointer;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #154d41; /* darker green on hover */
+        }
+
+        .message {
+            color: hsl(348, 89%, 7%); /* green */
+        }
+
+        input[type="text"],
+        input[type="password"],
+        input[type="submit"] {
+            width: 285px; /* Adjust the width as needed */
+        }
+    </style>
+</head>
+<body>
+
+    
+
+    <div class="form-container">
+        <div class="register-box">
+            <p class="message"><%= message%></a></p>
+            <h1>Sign up!</h1>
+        <form action="/auth/register" method="post">
+        <input type="text" id="username" name="username" placeholder="Username" required>
+        
+        <br>
+        <input type="password" id="password" name="password" placeholder="Password" required>
+
+        <br>
+        <input type="text" id="firstName" name="firstName" placeholder="First name" required>
+        
+        <br>
+
+        <input type="text" id="lastName" name="lastName" placeholder="Last name" required>
+
+        <br>
+        <input type="text" id="email" name="email" placeholder="Email" required>
+
+        <br>
+            
+        <input type="submit" value="Sign Up!">
+    </form>
+     Already have an account? <a href="/auth/playLogin">Login</a>
+</div>
+</div>
+    
+</body>
+</html>
+
+
+
+

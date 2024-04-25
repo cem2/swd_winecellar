@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WineCellar - Your bottle</title>
+    <link rel="stylesheet" href="/styles.css">
+    <script src="/jquery-3.7.1.min.js"></script>
+    <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>-->
+</head>
+<body>
+    <nav class="navbar">
+        <ul class="nav-list">
+            <li><a href="/">Home</a></li>
+            <li><a href="/">Cellars</a></li>
+            <li><a href="/wines/listAll">View Your Wines</a>
+            <!-- only display if group is correct -->
+            <% if (user && user.role === 'admin') { %>
+                <li><a href="/admin/">Admin</a>
+            <% } %>
+            <li><a href="/auth/logout">Logout</a>
+        </ul>
+    </nav>
+    <main>
+    <section>
+        <aside>
+        <div class="card" id="wineBottle">
+       
+        <% if (wineResults.length > 0) { %>
+            <p class="error-message"><%= message%></a></p>
+            <h1><%= wineResults[0].country %> > <%= wineResults[0].region %> > <%= wineResults[0].wineryName %> </h1>
+            <a href="#" onclick="editWinePopup()"><h5><%= wineResults[0].name %>,<%= wineResults[0].colour %>, <%= wineResults[0].year %></h5></a>
+            <h4>Currently <%= wineResults[0].status %>, with <%= wineResults[0].count %> stored in <%= wineResults[0].cellarName %> <a href="/cellar/listCellarWine/<%= wineResults[0].cellarId %>">cellar</a></h4> <!--<%= wineResults[0].cellarDesc %></h4>-->
+
+            <div class="dialog">
+                <div id="editWine" class="popup">
+                    <div class="popup-content">
+                        <h2>Edit wine</h2>
+                        <a href="#" onclick="closeWinePopup()" class="close-icon"></a>
+                        <form id="wineForm" action="/wines/updateWine/" method="post">
+                            <div class="form-input-field">
+                                <label for="newWineName">Name/Grape</label> 
+                                <input type="text" id="newWineName" name="newWineName" value="<%=wineResults[0].name%>"required>
+                            </div>
+            
+                            <div class="form-input-field">
+                                <label for="newWineYear">Vintage </label>
+                                <input type="text" id="newWineYear" name="newWineYear" value="<%= wineResults[0].year %>" required>
+                             </div>
+            
+                            <div class="form-input-field">
+                                <label for="newWineColour">Colour</label>
+                                <input type="text" id="newWineColour" name="newWineColour" value="<%= wineResults[0].colour %>" required>
+                            </div>
+
+                            <div class="form-input-field">
+                                <label for="count">Count</label>
+                                <input type="text" id="count" name="count" value="<%= wineResults[0].count %>" required>
+                            </div>
+                            <div class="form-input-field">
+                                <label for="status">Status</label>
+                                <select id="statusSelect" name="selectedStatus">
+                                    <option value="S" <% if (wineResults[0].status === 'Stored') { %> selected <% } %>> Stored</option>
+                                    <option value="X" <% if (wineResults[0].status === 'Gone') { %> selected <% } %>> Gone</option>
+                                    <option value="D" <% if (wineResults[0].status === 'Drinking') { %> selected <% } %>> Drinking</option>
+                                </select>
+                            </div>
+                            <input type="hidden" id="<%= wineResults[0].wineId %>" name="wineId" value="<%= wineResults[0].wineId %>">
+                            <button type="submit">Update</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+        <% } %>
+        <!-- loop through all the comments and allow to edit or delete  -->
+        <% if (wineComments.length > 0) { %>
+
+            <% wineComments.forEach(item => { %>
+            <div class="dialog" id="comment_<%= item.priv_comment_id %>">
+            <div class="comment">
+                <p><%= item.comment %></p> <button onclick="editCommentPopup('<%= item.priv_comment_id %>')">Edit</button> 
+                <div onclick="deleteComment('<%= item.priv_comment_id %>')" class="close-icon"></div>
+            </div>
+            </div>
+            <!-- popup div-->
+            <div class="dialog">
+                <div id="editComment_<%= item.priv_comment_id %>" class="popup">
+                    <div class="popup-content">
+                        <h2>Edit Comment</h2>
+                        <a href="#" onclick="closeCommentPopup('<%= item.priv_comment_id %>')" class="close-icon"></a>
+                        <form id="commentForm" action="/wines/updateNotes/" method="post">
+                            <div>
+                                <label for="note">Notes:</label>
+                                <textarea id="note" name="note" rows="4" cols="50"><%= item.comment %></textarea>
+                            </div>
+                            <input type="hidden" id="<%= item.wineId %>" name="wineId" value="<%= item.wineId %>">
+                            <input type="hidden" id="<%= item.priv_comment_id %>" name="priv_comment_id" value="<%= item.priv_comment_id %>">
+                            <button type="submit">Update Notes</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <% }); %>         
+        <% } %>
+
+        <% if (wineResults.length > 0) { %>
+            <!-- always display a new comment box to add a comment -->
+            <form action="/wines/addNote" method="post">
+                    <label for="comment">Add notes:</label><br>
+                    <textarea id="note" name="note" rows="15" cols="50"></textarea><br>
+                    <input type="hidden" id="<%= wineResults[0].wineId %>" name="wineId" value="<%= wineResults[0].wineId %>">
+                    <input type="submit" value="Submit">
+            </form>
+        <% } %>
+    
+        
+    </div>
+<script>
+
+    function editWinePopup() {
+        document.getElementById("editWine").style.display = "block";
+    }
+    
+    function closeWinePopup() {
+        document.getElementById("editWine").style.display = "none";
+    }
+
+    function editCommentPopup(commentId) {
+        var popupId = "editComment_" + commentId;
+        document.getElementById(popupId).style.display = "block";
+    }
+    
+    function closeCommentPopup(commentId) {
+        var popupId = "editComment_" + commentId;
+        document.getElementById(popupId).style.display = "none";
+    }
+
+    function deleteComment(commentId) {
+        fetch('/wines/deleteComment/' + commentId, {
+                method: 'DELETE',
+        })
+        .then(response => {
+            if (response.ok) {
+                // Handle success
+                console.log('Comment deleted successfully');
+                // Optionally, update the UI or perform any other actions
+                document.getElementById('comment_' + commentId).remove(); // Remove the comment from the DOM
+            } else {
+                // Handle error
+                console.error('Failed to delete comment');
+            }
+        })
+        .catch(error => {
+            // Handle network error
+            console.error('Network error:', error);
+        });
+    }
+
+
+</script>
+</body>
+</html>

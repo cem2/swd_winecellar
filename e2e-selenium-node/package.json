@@ -1,0 +1,15 @@
+{
+  "name": "e2e-selenium-node",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "chromedriver": "^123.0.3",
+    "selenium-webdriver": "^4.19.0"
+  }
+}

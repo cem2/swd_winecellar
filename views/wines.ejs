@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WineCellar - Wines</title>
+    <link rel="stylesheet" href="/styles.css">
+    <script src="/jquery-3.7.1.min.js"></script>
+    <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>-->
+</head>
+
+<body>
+    <nav class="navbar">
+        <ul class="nav-list">
+            <li><a href="/">Home</a></li>
+            <li><a href="/">Cellars</a></li>
+            <li><a href="/wines/listAll">View Your Wines</a>
+            <!-- only display if group is correct -->
+            <% if (user && user.role === 'admin') { %>
+            <li><a href="/admin/">Admin</a>
+            <% } %>
+            <li><a href="/auth/logout">Logout</a>
+        </ul>
+    </nav>
+
+    <!-- just lists wines -->
+    <main>
+    <section>
+        <aside>
+        <div class="dialog" id="wines">
+            <% if (typeof message !== 'undefined') { %>
+                <p class="message" id="message"><%= message %></p>
+            <% } %>
+            <h1>Wines</h1>
+        <ul>
+            <% wineResults.forEach(item => { %>
+            <div class="winelist" id="wine_<%= item.wineId %>">
+                <li><a href="/wines/<%= item.wineId %>"><%= item.wineName %></a> <%= item.year %> -  <%= item.wineryName %>, <%= item.region %>, <%= item.country %> in cellar <%= item.cellarName %>
+                </li>
+            </div>
+            <% }); %>
+        </ul>
+    </div>
+
+    
+</main>
+
+</body>
+</html>

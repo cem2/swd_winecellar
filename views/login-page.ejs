@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WineCellar - Login</title>
+    <link rel="stylesheet" href="/styles.css">
+    <style>
+
+        body {
+            background-color: #f0f0f0;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 20px;
+        }
+
+        form {
+            max-width: 300px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            box-sizing: border-box;
+            border: 1px solid #ccc; 
+            border-radius: 4px;
+            font-size: 16px;
+        } 
+
+        input[type="submit"] {
+            color: #fff; 
+            cursor: pointer;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #154d41;
+        }
+
+        .message {
+            color: hsl(348, 89%, 7%); 
+        }
+
+        input[type="text"],
+        input[type="password"],
+        input[type="submit"] {
+            width: 285px; 
+        }
+    </style>
+</head>
+<body>
+  
+    <div class="login-container">
+        <div class="login-box">
+            <p class="message"><%= message%></a></p>
+            <h2>Login</h2>
+            <form action="/auth/submitLogin" method="post">
+                <input type="text" id="username" name="username" placeholder="Username" required>
+    
+                <input type="password" id="password" name="password" placeholder="Password" required>
+
+                <input type="submit" value="Login">
+                <!--<input type="hidden" name="_csrf" value="${res.locals.csrfToken}">-->
+            </form>
+            <a href="/auth/playRegister">"Wanna join? Register now!"</a>
+        </div>
+    </div>
+    
+</body>
+</html>

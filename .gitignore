@@ -1,0 +1,15 @@
+# Ignore node_modules directory
+node_modules/
+stuffForPaper/
+logs/
+node_modules
+
+e2e-selenium-node/node_modules
+
+# Ignore log files
+*.log
+
+# Ignore environment configuration files
+CONFIG.env
+
+eslint.config.mjs
