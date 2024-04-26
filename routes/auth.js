@@ -132,12 +132,6 @@ router.route("/submitlogin").post(function(req,res,next) {
     try {
         const user = req.session.user;
 
-        /*const csrfToken = req.csrfToken();
-        const submittedCsrfToken = req.body._csrf;
-        if (!submittedCsrfToken || submittedCsrfToken !== csrfToken) {
-            res.redirect('/auth/logout');
-        }*/
-
         if (user) {
             // play dashboard
             return res.render('dashboard',{message:"Welcome back"});
@@ -199,11 +193,13 @@ router.route("/submitlogin").post(function(req,res,next) {
                                 return res.redirect('/');
                             
                             } else {
+                                log.info("Failed login attempt for " +username);
                                 return res.render('login-page',{ message: 'Invalid username or password' });
                             }
                         }
                     });
                 } else {
+                    log.info("Failed login attempt for " +username);
                     // No user found or credentials don't match
                     return res.render('login-page',{ message: 'Invalid username or password' });
                 }
@@ -279,20 +275,6 @@ router.route("/resetPassword").post(function(req,res,next) {
             const newPassword1 = req.body.newpassword1;
             const newPassword2 = req.body.newpassword2;
             const passwordCheck = [currentPassword,newPassword1,newPassword2]
-             
-
-            /*for (const v of passwordCheck) {
-                console.log(v);
-                if (
-                    v.length < MIN_PASSWORD_LENGTH ||
-                    !(/[A-Z]/.test(v) && /[a-z]/.test(v)) ||
-                    !/\d/.test(v) ||
-                    !SPECIAL_CHARS_REGEX.test(v)
-                ) {
-                    return res.render('reset-password',{ message: 'Passwords should be '+MIN_PASSWORD_LENGTH+' long and contain upper \
-                                                and lower case characters as well as special characters and digits' });
-                }
-            }*/
             
             passwordCheck.forEach(v => {
                 // validate passwords meet criteria
@@ -360,10 +342,13 @@ router.route("/resetPassword").post(function(req,res,next) {
                                     }
                                 });
                             } else {
+                                log.info("Failed reset password attempt for userId " +userId);
                                 return res.render('reset-password',{message:"Incorrect password"});
                             }
                         }
                     });
+                } else {
+                    log.info("Failed reset password attempt for userId " +userId);
                 }
             });
         } else {
