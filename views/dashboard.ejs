@@ -5,8 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Welcome</title>
     <link rel="stylesheet" href="/styles.css">
-    <script src="/jquery-3.7.1.min.js"></script>
-    <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 </head>
 <body>
     <nav class="navbar">
@@ -68,6 +67,7 @@
                             <br>   
                         
                             <input type="submit" value="Go!">
+                            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                         </form>
                    </div>
                </div>
@@ -94,21 +94,20 @@
         function deleteCellar(cellarId) {
             fetch('/cellar/delete/' + cellarId, {
                 method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-Token': '<%= csrfToken %>'
+                }
             })
             .then(response => {
                 if (response.ok) {
-                    // Handle success
-                    console.log('cellar deleted successfully');
-                    // Optionally, update the UI or perform any other actions
-                    document.getElementById('cellar_' + cellarId).remove(); // Remove the comment from the DOM
+                    document.getElementById('cellar_' + cellarId).remove(); 
                 } else {
-                    // Handle error
                     console.error('Failed to delete cellar');
                 }
             })
             .catch(error => {
-                // Handle network error
-                console.error('Network error:', error);
+                console.error('error:', error);
             });
         }
 

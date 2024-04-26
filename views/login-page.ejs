@@ -65,7 +65,7 @@
                 <input type="password" id="password" name="password" placeholder="Password" required>
 
                 <input type="submit" value="Login">
-                <!--<input type="hidden" name="_csrf" value="${res.locals.csrfToken}">-->
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
             </form>
             <a href="/auth/playRegister">"Wanna join? Register now!"</a>
         </div>

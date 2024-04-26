@@ -5,8 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WineCellar - Your bottle</title>
     <link rel="stylesheet" href="/styles.css">
-    <script src="/jquery-3.7.1.min.js"></script>
-    <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 </head>
 <body>
     <nav class="navbar">
@@ -67,6 +66,7 @@
                             </div>
                             <input type="hidden" id="<%= wineResults[0].wineId %>" name="wineId" value="<%= wineResults[0].wineId %>">
                             <button type="submit">Update</button>
+                            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                         </form>
                     </div>
                 </div>
@@ -97,6 +97,7 @@
                             <input type="hidden" id="<%= item.wineId %>" name="wineId" value="<%= item.wineId %>">
                             <input type="hidden" id="<%= item.priv_comment_id %>" name="priv_comment_id" value="<%= item.priv_comment_id %>">
                             <button type="submit">Update Notes</button>
+                            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                         </form>
                     </div>
                 </div>
@@ -111,6 +112,7 @@
                     <textarea id="note" name="note" rows="15" cols="50"></textarea><br>
                     <input type="hidden" id="<%= wineResults[0].wineId %>" name="wineId" value="<%= wineResults[0].wineId %>">
                     <input type="submit" value="Submit">
+                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
             </form>
         <% } %>
     
@@ -139,21 +141,20 @@
     function deleteComment(commentId) {
         fetch('/wines/deleteComment/' + commentId, {
                 method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-Token': '<%= csrfToken %>'
+                }
         })
         .then(response => {
             if (response.ok) {
-                // Handle success
-                console.log('Comment deleted successfully');
-                // Optionally, update the UI or perform any other actions
-                document.getElementById('comment_' + commentId).remove(); // Remove the comment from the DOM
+                document.getElementById('comment_' + commentId).remove();
             } else {
-                // Handle error
                 console.error('Failed to delete comment');
             }
         })
         .catch(error => {
-            // Handle network error
-            console.error('Network error:', error);
+            console.error('error:', error);
         });
     }
 

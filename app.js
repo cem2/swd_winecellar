@@ -69,30 +69,16 @@ function errorHandler(err, req, res, next) {
 // Register the middleware function
 app.use(errorHandler);
 
-/* Error event handler for uncaught exceptions
-process.on('uncaughtException', (err,res) => {
-  log.error('Uncaught exception occurred:', err);
-  console.error('Uncaught exception occurred:', err);
-  
-  res.status(500).render('sorry');
-});*/
 
-
-/* CSRF token handling
+/* CSRF token handling */
 const csrf = require('csurf');
-
-app.use(csrf({ cookie: true }));
+app.use(csrf());
 
 // Add CSRF token to response locals
 app.use((req, res, next) => {
   res.locals.csrfToken = req.csrfToken();
   next();
-});*/
-
-/*app.use((req, res, next) => {
-  res.locals.cspNonce = crypto.randomBytes(16).toString('hex');
-  next();
-});*/
+});
 
 // Use Helmet middleware
 app.use(helmet());
@@ -101,22 +87,12 @@ const scriptSrc = process.env.SCRIPT_SRC.split(',');
 const defaultSrc= process.env.DEFAULT_SRC.split(',');
 const scriptSrcAttr= process.env.SCRIPT_SRC_ATTR.split(',');
 
-/*app.use(
+app.use(
   helmet.contentSecurityPolicy({
     directives: {
       defaultSrc: defaultSrc,
       scriptSrc: scriptSrc,
       scriptSrcAttr: scriptSrcAttr
-    },
-  })
-)*/
-
-app.use(
-  helmet.contentSecurityPolicy({
-    directives: {
-      defaultSrc: ["'self'", "http://localhost:3000/"],
-      scriptSrc: ["'self'", "'unsafe-inline'", "http://localhost:3000/"],
-      scriptSrcAttr: ["'unsafe-inline'"]
     },
   })
 )
